@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28010.2016
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KK_MoreAccessoryParents", "KK_MoreAccessoryParents\KK_MoreAccessoryParents.csproj", "{35471FE3-0A99-400E-80D2-E644A73C77E8}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{35471FE3-0A99-400E-80D2-E644A73C77E8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{35471FE3-0A99-400E-80D2-E644A73C77E8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{35471FE3-0A99-400E-80D2-E644A73C77E8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{35471FE3-0A99-400E-80D2-E644A73C77E8}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {1712AA71-2FE1-4390-96FF-01F071D92377}
+	EndGlobalSection
+EndGlobal
