@@ -29,7 +29,7 @@ namespace KK_MoreAccessoryParents
             new BoneDropdown(
                 "Other", new[]
                 {
-                    new BoneEntry("cf_s_siri_L", "Left Ass Cheek", "cf_s_siri_R", "Right Ass Cheek"),
+                    new BoneEntry("cf_s_siri_L", "Left Butt Cheek", "cf_s_siri_R", "Right Butt Cheek"),
 
                     new BoneEntry("cf_j_toes_L", "Left Toes", "cf_j_toes_R", "Right Toes"),
                 }),
