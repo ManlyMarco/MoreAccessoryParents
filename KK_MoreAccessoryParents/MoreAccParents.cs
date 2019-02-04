@@ -8,6 +8,7 @@ using UniRx;
 
 namespace KK_MoreAccessoryParents
 {
+    [BepInDependency("com.joan6694.illusionplugins.moreaccessories")]
     [BepInPlugin(GUID, "More Accessory Parents", Version)]
     public partial class MoreAccParents : BaseUnityPlugin
     {
