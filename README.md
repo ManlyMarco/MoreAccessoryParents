@@ -1,3 +1,5 @@
+![Preview](https://user-images.githubusercontent.com/39247311/51492215-57257400-1db1-11e9-8f0e-b7097cc28bb2.png)
+
 # KK_MoreAccessoryParents
 A plugin for Koikatu! (コイカツ！ or Koikatsu!) that adds additional attachment points for accessories. It allows attaching to all finger segments, buttocks and toes.
 
