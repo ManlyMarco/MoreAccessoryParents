@@ -1,8 +1,9 @@
 ﻿using System.Collections;
 using System.Reflection;
 using BepInEx;
+using BepInEx.Logging;
 using ChaCustom;
-using Harmony;
+using HarmonyLib;
 using MoreAccessoriesKOI;
 using UniRx;
 
@@ -14,6 +15,7 @@ namespace KK_MoreAccessoryParents
     {
         public const string GUID = "marco.MoreAccParents";
         public const string Version = "1.0";
+        internal new static ManualLogSource Logger;
         private static readonly MethodInfo GetCvsAccessory = AccessTools.Method(typeof(MoreAccessories), "GetCvsAccessory");
 
         private static MoreAccParents _instance;
@@ -21,6 +23,7 @@ namespace KK_MoreAccessoryParents
         private void Start()
         {
             _instance = this;
+            Logger = base.Logger;
 
             Hooks.Initialize();
         }
