@@ -4,11 +4,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using BepInEx.Logging;
+using BepInEx.Harmony;
 using ChaCustom;
-using Harmony;
+using HarmonyLib;
 using UnityEngine;
 using UnityEngine.UI;
-using Logger = BepInEx.Logger;
 
 namespace KK_MoreAccessoryParents
 {
@@ -38,8 +38,7 @@ namespace KK_MoreAccessoryParents
 
             public static void Initialize()
             {
-                var hi = HarmonyInstance.Create(GUID);
-                hi.PatchAll(typeof(Hooks));
+                new Harmony(GUID).PatchAll(typeof(Hooks));
 
                 UpdateChaAccessoryDefine();
             }
