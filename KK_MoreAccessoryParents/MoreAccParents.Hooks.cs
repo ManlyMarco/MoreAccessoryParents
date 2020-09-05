@@ -145,7 +145,7 @@ namespace KK_MoreAccessoryParents
 
             [HarmonyPostfix]
             [HarmonyPatch(typeof(Enum), nameof(Enum.GetName))]
-            public static void GetNameHook(Type enumType, object value, string __result)
+            public static void GetNameHook(Type enumType, object value, ref string __result)
             {
                 if (__result != null) return;
 
