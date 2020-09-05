@@ -14,7 +14,7 @@ namespace KK_MoreAccessoryParents
     public partial class MoreAccParents : BaseUnityPlugin
     {
         public const string GUID = "marco.MoreAccParents";
-        public const string Version = "1.0";
+        public const string Version = "1.1";
         private static readonly MethodInfo _getCvsAccessory = AccessTools.Method(typeof(MoreAccessories), "GetCvsAccessory");
         internal static new ManualLogSource Logger;
         private static MoreAccParents _instance;
