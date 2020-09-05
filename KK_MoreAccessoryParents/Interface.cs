@@ -27,10 +27,10 @@ namespace KK_MoreAccessoryParents
 
             const int dropdownHeight = 32;
 
-            windRt.offsetMin = new Vector2(windRt.offsetMin.x, windRt.offsetMin.y -15 - dropdownHeight * InterfaceEntries.BoneList.Length);
+            windRt.offsetMin = new Vector2(windRt.offsetMin.x, windRt.offsetMin.y - 15 - dropdownHeight * InterfaceEntries.BoneList.Length);
 
             var toggleParent = accw.transform.Find("grpParent");
-            
+
             CreateHeader(toggleParent);
 
             var originalToggle = toggleParent.Find("imgRbCol51");
@@ -79,7 +79,7 @@ namespace KK_MoreAccessoryParents
                 dropdown.onValueChanged.RemoveAllListeners();
                 dropdown.ClearOptions();
                 dropdown.GetComponent<Image>().raycastTarget = true;
-                
+
                 dropdown.options.AddRange(list.GetBoneNames(true).Select(x => new TMP_Dropdown.OptionData(x)));
                 dropdown.value = 0;
                 var dropdownIndex = i;
@@ -122,14 +122,20 @@ namespace KK_MoreAccessoryParents
 
         public static void DestroyInterface()
         {
-            if(!Dropdowns.Any()) return;
+            if (!Dropdowns.Any()) return;
 
             foreach (var dd in Dropdowns)
-                Object.DestroyImmediate(dd?.transform?.parent?.gameObject);
+            {
+                if (dd != null && dd.transform != null && dd.transform.parent != null)
+                    Object.DestroyImmediate(dd.transform.parent.gameObject);
+            }
             Dropdowns.Clear();
 
             foreach (var toggle in Toggles)
-                Object.DestroyImmediate(toggle?.gameObject);
+            {
+                if (toggle != null)
+                    Object.DestroyImmediate(toggle.gameObject);
+            }
             Toggles.Clear();
 
             Object.DestroyImmediate(GameObject.Find("textAdditionalMod"));
