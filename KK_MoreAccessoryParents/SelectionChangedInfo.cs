@@ -1,6 +1,6 @@
 ﻿namespace KK_MoreAccessoryParents
 {
-    internal struct SelectionChangedInfo
+    internal readonly struct SelectionChangedInfo
     {
         public readonly ChaAccessoryDefine.AccessoryParentKey AccessoryParentKey;
         public readonly ChaReference.RefObjKey RefObjKey;

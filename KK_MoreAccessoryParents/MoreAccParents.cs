@@ -1,8 +1,9 @@
 ﻿using System.Collections;
 using System.Reflection;
 using BepInEx;
+using BepInEx.Logging;
 using ChaCustom;
-using Harmony;
+using HarmonyLib;
 using MoreAccessoriesKOI;
 using UniRx;
 
@@ -14,13 +15,14 @@ namespace KK_MoreAccessoryParents
     {
         public const string GUID = "marco.MoreAccParents";
         public const string Version = "1.0";
-        private static readonly MethodInfo GetCvsAccessory = AccessTools.Method(typeof(MoreAccessories), "GetCvsAccessory");
-
+        private static readonly MethodInfo _getCvsAccessory = AccessTools.Method(typeof(MoreAccessories), "GetCvsAccessory");
+        internal static new ManualLogSource Logger;
         private static MoreAccParents _instance;
 
         private void Start()
         {
             _instance = this;
+            Logger = base.Logger;
 
             Hooks.Initialize();
         }
@@ -54,7 +56,7 @@ namespace KK_MoreAccessoryParents
 
             if (!(bool)AccessTools.Field(cat, "updateWin").GetValue(window))
             {
-                var selAcc = (CvsAccessory)GetCvsAccessory.Invoke(MoreAccessories._self, new object[] { (int)window.slotNo });
+                var selAcc = (CvsAccessory)_getCvsAccessory.Invoke(MoreAccessories._self, new object[] { (int)window.slotNo });
                 selAcc.UpdateSelectAccessoryParent((int)accessoryParentKey - 1);
             }
         }

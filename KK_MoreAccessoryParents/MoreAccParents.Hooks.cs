@@ -5,10 +5,9 @@ using System.Linq;
 using System.Reflection;
 using BepInEx.Logging;
 using ChaCustom;
-using Harmony;
+using HarmonyLib;
 using UnityEngine;
 using UnityEngine.UI;
-using Logger = BepInEx.Logger;
 
 namespace KK_MoreAccessoryParents
 {
@@ -38,8 +37,7 @@ namespace KK_MoreAccessoryParents
 
             public static void Initialize()
             {
-                var hi = HarmonyInstance.Create(GUID);
-                hi.PatchAll(typeof(Hooks));
+                Harmony.CreateAndPatchAll(typeof(Hooks));
 
                 UpdateChaAccessoryDefine();
             }
@@ -67,7 +65,7 @@ namespace KK_MoreAccessoryParents
             }
 
             [HarmonyPostfix]
-            [HarmonyPatch(typeof(ChaAccessoryDefine), nameof(ChaAccessoryDefine.GetReverseParent), new[] { typeof(string) })]
+            [HarmonyPatch(typeof(ChaAccessoryDefine), nameof(ChaAccessoryDefine.GetReverseParent), typeof(string))]
             public static void GetReverseParentPrefix(string key, ref string __result)
             {
                 if (__result == string.Empty)
@@ -75,7 +73,7 @@ namespace KK_MoreAccessoryParents
             }
 
             [HarmonyPostfix]
-            [HarmonyPatch(typeof(ChaAccessoryDefine), nameof(ChaAccessoryDefine.GetReverseParent), new[] { typeof(ChaAccessoryDefine.AccessoryParentKey) })]
+            [HarmonyPatch(typeof(ChaAccessoryDefine), nameof(ChaAccessoryDefine.GetReverseParent), typeof(ChaAccessoryDefine.AccessoryParentKey))]
             public static void GetReverseParentPrefix(ChaAccessoryDefine.AccessoryParentKey key, ref ChaAccessoryDefine.AccessoryParentKey __result)
             {
                 if (__result == ChaAccessoryDefine.AccessoryParentKey.none)
@@ -166,7 +164,7 @@ namespace KK_MoreAccessoryParents
             }
 
             [HarmonyPrefix]
-            [HarmonyPatch(typeof(Enum), nameof(Enum.Parse), new Type[] { typeof(Type), typeof(string), typeof(bool) })]
+            [HarmonyPatch(typeof(Enum), nameof(Enum.Parse), typeof(Type), typeof(string), typeof(bool))]
             public static bool ParseHook(Type enumType, string value, bool ignoreCase, ref object __result)
             {
                 if (enumType == EnumAccesoryParentKeyType)
