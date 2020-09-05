@@ -12,8 +12,6 @@ else {
 
 $copy = $dir + "\copy\BepInEx" 
 
-New-Item -ItemType Directory -Force -Path ($dir + "\out")  
-
 # Create releases ---------
 function CreateZip ($element)
 {
