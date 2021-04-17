@@ -7,6 +7,7 @@ A plugin for Koikatu! (コイカツ！ or Koikatsu!) that adds additional attach
 Check the [releases](/../../releases).
 
 ## How to use
-1. Requires at least [BepInEx 4.0 64bit](https://github.com/BepInEx/BepInEx/releases) to be applied to the game.
+1. Requires at least [BepInEx 5.1 64bit](https://github.com/BepInEx/BepInEx/releases) to be applied to the game.
 2. Requires at least [MoreAccessories 1.0.3](https://www.patreon.com/joan6694/posts?tag=MoreAccessories).
-3. Place the .dll inside your BepInEx directory. New options will appear in the character maker.
+3. Download the [release](/../../releases) and extract it inside your game directory. The .dll should end up inside your `BepInEx\plugins` directory.
+4. Look out for errors when starting the game. New options should appear in the character maker.
