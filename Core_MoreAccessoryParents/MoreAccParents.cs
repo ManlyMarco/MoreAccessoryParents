@@ -1,9 +1,5 @@
-﻿using System.Collections;
-using BepInEx;
+﻿using BepInEx;
 using BepInEx.Logging;
-using ChaCustom;
-using KKAPI.Maker;
-using UniRx;
 
 namespace KK_MoreAccessoryParents
 {
@@ -12,7 +8,7 @@ namespace KK_MoreAccessoryParents
     public partial class MoreAccParents : BaseUnityPlugin
     {
         public const string GUID = "marco.MoreAccParents";
-        public const string Version = "1.2";
+        public const string Version = "2.0";
         internal static new ManualLogSource Logger;
 
         private void Start()
