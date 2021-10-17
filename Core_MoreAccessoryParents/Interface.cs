@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using ChaCustom;
 using TMPro;
 using UniRx;
 using UnityEngine;
@@ -20,7 +21,9 @@ namespace KK_MoreAccessoryParents
             Selection = new Subject<SelectionChangedInfo>();
             Selection.Subscribe(OnUpdateInterface);
 
-            var accw = GameObject.Find("AcsParentWindow");
+            var accCmp = GameObject.FindObjectOfType<CustomAcsParentWindow>();
+
+            var accw = accCmp.gameObject;//GameObject.Find("AcsParentWindow");
 
             var windBack = accw.transform.Find("BasePanel/imgWindowBack");
             var windRt = windBack.GetComponent<RectTransform>();
@@ -35,7 +38,13 @@ namespace KK_MoreAccessoryParents
 
             var originalToggle = toggleParent.Find("imgRbCol51");
             var toggleGroup = originalToggle.GetComponent<Toggle>().group;
+
+            //var ccsmCmp = GameObject.FindObjectOfType<CustomChangeSystemMenu>();
+#if KK      
             var originalDropdown = GameObject.Find("CustomScene/CustomRoot/FrontUIGroup/CustomUIGroup/CvsMenuTree/06_SystemTop/tglConfig/ConfigTop/ddRamp").transform;
+#elif KKS
+            var originalDropdown = GameObject.Find("CustomScene/CustomRoot/FrontUIGroup/CustomUIGroup/CvsMenuTree/06_SystemTop/tglVisualSettings/ConfigTop/ddRampG").transform;
+#endif
 
             for (var i = 0; i < InterfaceEntries.BoneList.Length; i++)
             {

@@ -2,12 +2,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using BepInEx.Logging;
 using ChaCustom;
 using HarmonyLib;
+using KKAPI.Maker;
+using UniRx;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace KK_MoreAccessoryParents
 {
@@ -15,31 +15,44 @@ namespace KK_MoreAccessoryParents
     {
         internal static class Hooks
         {
-            private static readonly Type EnumAccesoryParentKeyType = typeof(ChaAccessoryDefine.AccessoryParentKey);
-            private static readonly Type EnumRefObjKeyType = typeof(ChaReference.RefObjKey);
-            private static readonly string[] SelectParentHookCache;
-            private static readonly FieldInfo FieldTglParent;
-            internal static readonly int AccessoryParentKeyOriginalCount;
-            internal static readonly int RefObjKeyOriginalCount;
+            private static Type EnumAccesoryParentKeyType = typeof(ChaAccessoryDefine.AccessoryParentKey);
+            private static Type EnumRefObjKeyType = typeof(ChaReference.RefObjKey);
+            private static string[] SelectParentHookCache;
+            internal static int AccessoryParentKeyOriginalCount;
+            internal static int RefObjKeyOriginalCount;
 
-            static Hooks()
+            public static void Initialize()
             {
-                FieldTglParent = AccessTools.Field(typeof(CustomAcsParentWindow), "tglParent");
-
                 // Do this before hooking!
                 SelectParentHookCache = (from key in Enum.GetNames(EnumAccesoryParentKeyType)
                                          where key != "none"
                                          select key).ToArray();
-
                 AccessoryParentKeyOriginalCount = Enum.GetValues(EnumAccesoryParentKeyType).Length;
                 RefObjKeyOriginalCount = Enum.GetValues(EnumRefObjKeyType).Length;
-            }
 
-            public static void Initialize()
-            {
                 Harmony.CreateAndPatchAll(typeof(Hooks));
 
                 UpdateChaAccessoryDefine();
+
+                MakerAPI.MakerBaseLoaded += (s, e) =>
+                {
+                    Interface.CreateInterface();
+
+                    Interface.Selection.Subscribe(
+                        Observer.Create<SelectionChangedInfo>(
+                            info => SetCurrentAccessoryParent(info.AccessoryParentKey)));
+                };
+                MakerAPI.MakerExiting += (s, e) => Interface.DestroyInterface();
+            }
+
+            private static void SetCurrentAccessoryParent(ChaAccessoryDefine.AccessoryParentKey accessoryParentKey)
+            {
+                var window = FindObjectOfType<CustomAcsParentWindow>();
+                if (!window.updateWin)
+                {
+                    var selAcc = window.cvsAccessory[(int)window.slotNo];
+                    selAcc.UpdateSelectAccessoryParent((int)accessoryParentKey - 1);
+                }
             }
 
             private static void UpdateChaAccessoryDefine()
@@ -87,21 +100,6 @@ namespace KK_MoreAccessoryParents
                         Logger.Log(LogLevel.Error, e);
                     }
                 }
-            }
-
-            [HarmonyPatch(typeof(CustomScene), "Start")]
-            [HarmonyPrefix]
-            public static void CustomScene_Start()
-            {
-                if (Singleton<CustomBase>.Instance != null)
-                    OnMakerStart();
-            }
-
-            [HarmonyPatch(typeof(CustomScene), "OnDestroy")]
-            [HarmonyPrefix]
-            public static void CustomScene_Destroy()
-            {
-                OnMakerExit();
             }
 
             /// <summary>
@@ -189,28 +187,37 @@ namespace KK_MoreAccessoryParents
             }
 
             [HarmonyPostfix]
-            [HarmonyPatch(typeof(ChaReference), nameof(ChaReference.CreateReferenceInfo))]
+            [HarmonyPatch(typeof(ChaReference), nameof(ChaReference.CreateReferenceInfo), typeof(ulong), typeof(GameObject))]
             public static void CreateReferenceInfoHook(ChaReference __instance, ulong flags, GameObject objRef)
             {
                 if (null == objRef || (int)(flags - 1UL) != 0) return;
 
-                CreateReferenceImpl(__instance, objRef);
-            }
-
-            private static void CreateReferenceImpl(ChaReference __instance, GameObject objRef)
-            {
                 var findAssist = new FindAssist();
                 findAssist.Initialize(objRef.transform);
 
-                var dict = (Dictionary<ChaReference.RefObjKey, GameObject>)
-                    AccessTools.Field(typeof(ChaReference), "dictRefObj").GetValue(__instance);
+                var dict = __instance.dictRefObj;
 
                 for (var i = 0; i < InterfaceEntries.AllBones.Length; i++)
                 {
-                    dict[(ChaReference.RefObjKey)(RefObjKeyOriginalCount + i)] =
-                        findAssist.GetObjectFromName(InterfaceEntries.AllBones[i]);
+                    dict[(ChaReference.RefObjKey)(RefObjKeyOriginalCount + i)] = findAssist.GetObjectFromName(InterfaceEntries.AllBones[i]);
                 }
             }
+
+#if KKS
+            [HarmonyPostfix]
+            [HarmonyPatch(typeof(ChaReference), nameof(ChaReference.CreateReferenceInfo), typeof(ulong), typeof(ChaLoad.ChaPreparationBodyBone.BoneInfo[]))]
+            public static void CreateReferenceInfoHook(ChaReference __instance, ulong flags, ChaLoad.ChaPreparationBodyBone.BoneInfo[] boneInfos)
+            {
+                if (null == boneInfos || (int)(flags - 1UL) != 0) return;
+
+                var dict = __instance.dictRefObj;
+
+                for (var i = 0; i < InterfaceEntries.AllBones.Length; i++)
+                {
+                    dict[(ChaReference.RefObjKey)(RefObjKeyOriginalCount + i)] = boneInfos.First(x => x.name == InterfaceEntries.AllBones[i]).gameObject;
+                }
+            }
+#endif
 
             [HarmonyPostfix]
             [HarmonyPatch(typeof(ChaReference), nameof(ChaReference.ReleaseRefObject))]
@@ -219,7 +226,7 @@ namespace KK_MoreAccessoryParents
                 if ((int)(flags - 1UL) != 0)
                     return;
 
-                var dict = (Dictionary<ChaReference.RefObjKey, GameObject>)AccessTools.Field(typeof(ChaReference), "dictRefObj").GetValue(__instance);
+                var dict = __instance.dictRefObj;
 
                 for (var i = 0; i < InterfaceEntries.AllBones.Length; i++)
                 {
@@ -236,11 +243,10 @@ namespace KK_MoreAccessoryParents
 
                 // Fall back to stock logic
                 var num = Array.IndexOf(SelectParentHookCache, parentKey);
+
                 if (num != -1)
-                {
-                    var toggles = (Toggle[])FieldTglParent.GetValue(__instance);
-                    toggles[num].isOn = true;
-                }
+                    __instance.tglParent[num].isOn = true;
+
                 __result = num;
                 return false;
             }

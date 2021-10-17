@@ -1,7 +1,3 @@
-# Config ------------------
-$gamePrefixes = @("KK")
-$plugName = "MoreAccessoryParents"
-
 # Env setup ---------------
 if ($PSScriptRoot -match '.+?\\bin\\?') {
     $dir = $PSScriptRoot + "\"
@@ -10,32 +6,39 @@ else {
     $dir = $PSScriptRoot + "\bin\"
 }
 
-$copy = $dir + "\copy\BepInEx" 
+$copy = $dir + "\copy\BepInEx\plugins" 
+
+New-Item -ItemType Directory -Force -Path ($dir + "\out\")
 
 # Create releases ---------
-function CreateZip ($element)
+function CreateZip ($pluginFile)
 {
     Remove-Item -Force -Path ($dir + "\copy") -Recurse -ErrorAction SilentlyContinue
-    New-Item -ItemType Directory -Force -Path ($copy + "\plugins")
+    New-Item -ItemType Directory -Force -Path $copy
 
-    Copy-Item -Path ($dir + $element + "*.*") -Destination ($copy + "\plugins\" ) -Recurse -Force 
+    # the actual dll
+    Copy-Item -Path $pluginFile.FullName -Destination $copy -Recurse -Force
+    # the docs xml if it exists
+    Copy-Item -Path ($pluginFile.DirectoryName + "\" + $pluginFile.BaseName + ".xml") -Destination $copy -Recurse -Force -ErrorAction Ignore
 
-    $ver = "v" + (Get-ChildItem -Path ($copy) -Filter "*.dll" -Recurse -Force)[0].VersionInfo.FileVersion.ToString()
+    # the replace removes .0 from the end of version up until it hits a non-0 or there are only 2 version parts remaining (e.g. v1.0 v1.0.1)
+    $ver = (Get-ChildItem -Path ($copy) -Filter "*.dll" -Recurse -Force)[0].VersionInfo.FileVersion.ToString() -replace "^([\d+\.]+?\d+)[\.0]*$", '${1}'
 
-    Compress-Archive -Path $copy -Force -CompressionLevel "Optimal" -DestinationPath ($dir + $element + "_" + $plugName + "_" + $ver + ".zip")
+    Compress-Archive -Path ($copy + "\..\") -Force -CompressionLevel "Optimal" -DestinationPath ($dir + "\out\" + $pluginFile.BaseName + "_" + "v" + $ver + ".zip")
 }
 
-foreach ($gamePrefix in $gamePrefixes) 
+foreach ($pluginFile in Get-ChildItem -Path $dir -Filter *.dll) 
 {
     try
     {
-        CreateZip ($gamePrefix)
+        CreateZip ($pluginFile)
     }
     catch 
     {
         # retry
-        CreateZip ($gamePrefix)
+        CreateZip ($pluginFile)
     }
 }
+
 
 Remove-Item -Force -Path ($dir + "\copy") -Recurse
