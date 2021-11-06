@@ -8,7 +8,7 @@ namespace KK_MoreAccessoryParents
     public partial class MoreAccParents : BaseUnityPlugin
     {
         public const string GUID = "marco.MoreAccParents";
-        public const string Version = "2.0";
+        public const string Version = "2.0.1";
         internal static new ManualLogSource Logger;
 
         private void Start()
