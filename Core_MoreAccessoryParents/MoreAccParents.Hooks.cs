@@ -256,7 +256,15 @@ namespace KK_MoreAccessoryParents
                 var myIndex = Array.IndexOf(InterfaceEntries.AllBones, parentKey);
                 if (myIndex >= 0)
                 {
-                    Interface.SetByName(parentKey);
+                    try
+                    {
+                        Interface.SetByName(parentKey);
+                    }
+                    catch (Exception ex)
+                    {
+                        UnityEngine.Debug.LogException(ex);
+                        return false;
+                    }
 
                     resultEnumId = AccessoryParentKeyOriginalCount - 1 + myIndex; // -1 skip none element
                     return true;

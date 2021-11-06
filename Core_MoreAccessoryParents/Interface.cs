@@ -165,6 +165,9 @@ namespace KK_MoreAccessoryParents
                 return -1;
             }
 
+            // UI not initialized yet
+            if (Dropdowns.Count == 0) return;
+
             for (var groupIndex = 0; groupIndex < InterfaceEntries.BoneList.Length; groupIndex++)
             {
                 var bones = InterfaceEntries.BoneList[groupIndex].GetBoneNames(false);
